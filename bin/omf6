@@ -132,7 +132,7 @@ def save(comm)
 
 end
 
-def tell(comm)
+def tell(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
       controller.on_message do |m|
@@ -170,7 +170,7 @@ def tell(comm)
   end
 end
 
-def stat(comm)
+def stat(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
       options[:target_nodes].each do |node|
@@ -242,7 +242,7 @@ OmfCommon.init(:development, communication: { url: 'xmpp://beta:1234@localhost' 
       if options[:image].nil? && options[:node].nil? && !options[:status].nil? && !options[:target_nodes].nil?
         if options[:status] == "on" || options[:status] == "off" || options[:status] == "reset"
           puts "call tell on options #{options.inspect}"
-          tell(comm)
+          tell(comm, options)
         else
           puts "Invalid value for -a, only on/off/reset values are available."
           puts opt_parser
@@ -256,7 +256,7 @@ OmfCommon.init(:development, communication: { url: 'xmpp://beta:1234@localhost' 
     when "stat"
       if options[:image].nil? && options[:node].nil? && options[:status].nil? && !options[:target_nodes].nil?
         puts "call stat on options #{options.inspect}"
-        stat(comm)
+        stat(comm, options)
       else
         puts "Invalid arguements."
         puts opt_parser
