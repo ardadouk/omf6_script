@@ -140,6 +140,7 @@ def tell(comm, options)
         if m.operation == :inform
           case m.read_content("itype")
           when 'STATUS'
+            puts "#{m.read_content("node_name")}: #{m.read_content("msg")}"
             logger.info "#{m.read_content("msg")}, exit code: #{m.read_content("exit_code")}"
           when 'ERROR'
             error m.read_content('reason') if m.read_content("itype") == 'ERROR'
