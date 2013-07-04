@@ -102,7 +102,7 @@ def load(comm, options)
                 comm.subscribe('frisbeeController') do |fcontroller|
                   fcontroller.request([:ports]) do |m|
                     puts "########## msg: #{m.inspect}"
-                    port = m.reead_property("ports")
+                    port = m.read_property("ports")
                     puts "port: #{port}"
                     sleep 1
                     create_frisbeed(fcontroller, port, options)
