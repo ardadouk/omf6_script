@@ -104,6 +104,7 @@ def load(comm, options)
                     puts "########## msg: #{m.inspect}"
                   end
                   puts "port: #{port}"
+                  sleep 10
                   create_frisbeed(fcontroller, port, options)
                   options[:target_nodes].each do |node|
                     create_frisbee(fcontroller, node, port) #frisbee client
