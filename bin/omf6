@@ -205,7 +205,7 @@ def stat(comm, options)
           end
 
           options[:target_nodes].each do |node|
-            controller.configure(state: {node: node.to_sym, status: :})
+            controller.configure(state: {node: node.to_sym, status: :get_status})
           end
         end
     else
