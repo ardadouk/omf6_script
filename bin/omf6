@@ -90,7 +90,7 @@ def load(comm, options)
       @nof_nodes = options[:target_nodes].length
       #@nof_nodes_up_frisbee = 0
       nof_nodes_up_pxe = 0
-      port = controller.request(:ports)
+      port = controller.request([:ports])
       controller.on_message do |m|
         if m.operation == :inform && m.read_content("event_type") == "PXE"
           case m.read_content("itype")
