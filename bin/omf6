@@ -101,7 +101,7 @@ def load(comm, options)
               if @nof_nodes == nof_nodes_up_pxe #all nodes are up and running on pxe
                 comm.subscribe('frisbeeController') do |fcontroller|
                   fcontroller.request([:ports]) do |m|
-                    puts "########## msg: #{m}"
+                    puts "########## msg: #{m.inspect}"
                   end
                   puts "port: #{port}"
                   create_frisbeed(fcontroller, port, options)
