@@ -115,12 +115,11 @@ def load(comm, options)
             warn m.read_content('reason') if m.read_content("itype") == 'WARN'
           end
         end
-
-        options[:target_nodes].each do |node|
-          controller.configure(state: {node: node.to_sym, status: :start_on_pxe})
-        end
-        puts "waiting for target nodes to boot on PXE."
       end
+      options[:target_nodes].each do |node|
+        controller.configure(state: {node: node.to_sym, status: :start_on_pxe})
+      end
+      puts "waiting for target nodes to boot on PXE."
     else
       error controller.inspect
     end
