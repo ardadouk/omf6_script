@@ -177,7 +177,7 @@ def stat(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
       options[:target_nodes].each do |node|
-        controller.request(:node_state, "#{node}") do |m|
+        controller.request(node_state: "#{node}") do |m|
           if m.operation == :inform
             case m.read_content("itype")
             when 'STATUS'
