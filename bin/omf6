@@ -140,8 +140,9 @@ def tell(comm, options)
         if m.operation == :inform
           case m.read_content("itype")
           when 'STATUS'
-            puts "#{m.read_content("node_name")}: #{m.read_content("msg")}"
-            logger.info "#{m.read_content("msg")}, exit code: #{m.read_content("exit_code")}"
+            puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
+            logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+            comm.disconnect
           when 'ERROR'
             error m.read_content('reason') if m.read_content("itype") == 'ERROR'
           when 'WARN'
