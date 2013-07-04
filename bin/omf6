@@ -176,20 +176,6 @@ end
 def stat(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
-      options[:target_nodes].each do |node|
-        puts "@@@@@@ #{node}"
-#         controller.request(node_state: node) do |m|
-#           if m.operation == :inform
-#             case m.read_content("itype")
-#             when 'STATUS'
-#               logger.info "node: '#{m.read_content("node_name")}' is #{m.read_content("msg")}"
-#             when 'ERROR'
-#               error m.read_content('msg')
-#             when 'WARN'
-#               warn m.read_content('msg')
-#             end
-#           end
-#         end
         controller.on_message do |m|
           if m.operation == :inform
             case m.read_content("itype")
@@ -209,6 +195,18 @@ def stat(comm, options)
           end
         end
       end
+#         controller.request(node_state: node) do |m|
+#           if m.operation == :inform
+#             case m.read_content("itype")
+#             when 'STATUS'
+#               logger.info "node: '#{m.read_content("node_name")}' is #{m.read_content("msg")}"
+#             when 'ERROR'
+#               error m.read_content('msg')
+#             when 'WARN'
+#               warn m.read_content('msg')
+#             end
+#           end
+#         end
     else
       error controller.inspect
       comm.disconnect
