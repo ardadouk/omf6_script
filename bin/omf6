@@ -178,19 +178,36 @@ def stat(comm, options)
     unless controller.error?
       options[:target_nodes].each do |node|
         puts "@@@@@@ #{node}"
-        controller.request(node_state: node) do |m|
+#         controller.request(node_state: node) do |m|
+#           if m.operation == :inform
+#             case m.read_content("itype")
+#             when 'STATUS'
+#               logger.info "node: '#{m.read_content("node_name")}' is #{m.read_content("msg")}"
+#             when 'ERROR'
+#               error m.read_content('msg')
+#             when 'WARN'
+#               warn m.read_content('msg')
+#             end
+#           end
+#         end
+        controller.on_message do |m|
           if m.operation == :inform
             case m.read_content("itype")
             when 'STATUS'
-              logger.info "node: '#{m.read_content("node_name")}' is #{m.read_content("msg")}"
+              puts "#{m.read_property("node_name")} is #{m.read_property("msg")}"
+              logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+              comm.disconnect
             when 'ERROR'
-              error m.read_content('msg')
+              error m.read_content('reason') if m.read_content("itype") == 'ERROR'
             when 'WARN'
-              warn m.read_content('msg')
+              warn m.read_content('reason') if m.read_content("itype") == 'WARN'
             end
           end
+
+          options[:target_nodes].each do |node|
+            controller.configure(state: {node: node.to_sym, status: :})
+          end
         end
-      end
     else
       error controller.inspect
       comm.disconnect
