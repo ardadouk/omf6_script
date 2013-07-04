@@ -189,10 +189,10 @@ def stat(comm, options)
               warn m.read_content('reason') if m.read_content("itype") == 'WARN'
             end
           end
+        end
 
-          options[:target_nodes].each do |node|
-            controller.configure(state: {node: node.to_sym, status: :get_status})
-          end
+        options[:target_nodes].each do |node|
+          controller.configure(state: {node: node.to_sym, status: :get_status})
         end
 #         controller.request(node_state: node) do |m|
 #           if m.operation == :inform
