@@ -176,26 +176,30 @@ end
 def stat(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
-        controller.on_message do |m|
-          if m.operation == :inform
-            case m.read_content("itype")
-            when 'STATUS'
-              if m.read_property("event_type") == "NODE_STATUS"
-                puts "#{m.read_property("node_name")} is #{m.read_property("msg")} \n"
-                logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+      nof_nodes = 0
+      controller.on_message do |m|
+        if m.operation == :inform
+          case m.read_content("itype")
+          when 'STATUS'
+            if m.read_property("event_type") == "NODE_STATUS"
+              puts "#{m.read_property("node_name")} is #{m.read_property("msg")} \n"
+              logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+              nof_nodes += 1
+              if nof_nodes == options[:target_nodes].length
                 comm.disconnect
               end
-            when 'ERROR'
-              error m.read_content('reason') if m.read_content("itype") == 'ERROR'
-            when 'WARN'
-              warn m.read_content('reason') if m.read_content("itype") == 'WARN'
             end
+          when 'ERROR'
+            error m.read_content('reason') if m.read_content("itype") == 'ERROR'
+          when 'WARN'
+            warn m.read_content('reason') if m.read_content("itype") == 'WARN'
           end
         end
+      end
 
-        options[:target_nodes].each do |node|
-          controller.configure(state: {node: node.to_sym, status: :get_status})
-        end
+      options[:target_nodes].each do |node|
+        controller.configure(state: {node: node.to_sym, status: :get_status})
+      end
 #         controller.request(node_state: node) do |m|
 #           if m.operation == :inform
 #             case m.read_content("itype")
