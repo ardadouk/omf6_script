@@ -208,6 +208,7 @@ def stat(comm, options)
             controller.configure(state: {node: node.to_sym, status: :get_status})
           end
         end
+      end
     else
       error controller.inspect
       comm.disconnect
