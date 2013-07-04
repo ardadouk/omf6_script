@@ -97,7 +97,7 @@ def load(comm, options)
           when 'STATUS'
             logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
             if m.read_property("exit_code") == 0
-              nof_nodes_up += 1
+              @nof_nodes_up += 1
               if @nof_nodes == nof_nodes_up_pxe #all nodes are up and running on pxe
                 comm.subscribe('frisbeeController') do |fcontroller|
                   create_frisbeed(fcontroller, port)
