@@ -25,7 +25,7 @@ opt_parser = OptionParser.new do |opts|
 end
 
 #run frisbee server
-def create_frisbeed(comm, port)
+def create_frisbeed(comm, port, options)
   comm.create(:frisbeed, hrn: 'frisbee server', image: options[:image], port: port) do |reply_msg|
     #image "/var/lib/omf-images-5.4/baseline.ndz"
     if reply_msg.success?
@@ -100,7 +100,7 @@ def load(comm, options)
               nof_nodes_up_pxe += 1
               if @nof_nodes == nof_nodes_up_pxe #all nodes are up and running on pxe
                 comm.subscribe('frisbeeController') do |fcontroller|
-                  create_frisbeed(fcontroller, port)
+                  create_frisbeed(fcontroller, port, options)
                   options[:target_nodes].each do |node|
                     create_frisbee(fcontroller, node, port) #frisbee client
                   end
