@@ -31,7 +31,6 @@ def create_frisbeed(comm, port)
     if reply_msg.success?
       server = reply_msg.resource
       server.on_subscribed do
-        info ">>> Connected to newly created frisbee server #{reply_msg[:hrn]}(id: #{reply_msg[:res_id]})"
         server.on_message do |m|
           if m.operation == :inform
             if m.read_content("event") == "STDOUT"
@@ -58,19 +57,18 @@ def create_frisbee(comm, node, port)
     if reply_msg.success?
       client = reply_msg.resource
       client.on_subscribed do
-        info ">>> Connected to newly created frisbee client #{reply_msg[:hrn]}(id: #{reply_msg[:res_id]})"
         client.on_message do |m|
           if m.operation == :inform
-            if m.read_content("event") == "STARTED"#only happens when frisbee runs with application resource controller
+            if m.read_property("event") == "STARTED"#only happens when frisbee runs with application resource controller
 #               @nof_nodes_up_frisbee += 1
 #               if @nof_nodes == @nof_nodes_up_frisbee
 #                 create_frisbeed(fcontroller, port) #frisbee server
 #                 puts "load operation started."
 #               end
-            elsif m.read_content("event") == "STDOUT"
-              puts m.read_content("msg")
-            elsif m.read_content("event") == "EXIT" #only happens when frisbee runs with application resource controller
-              puts m.read_content("msg")
+            elsif m.read_property("event") == "STDOUT"
+              puts m.read_property("msg")
+            elsif m.read_property("event") == "EXIT" #only happens when frisbee runs with application resource controller
+              puts m.read_property("msg")
             end
           end
         end
@@ -85,7 +83,7 @@ def create_frisbee(comm, node, port)
   end
 end
 
-def load(comm)
+def load(comm, options)
   comm.subscribe('cmController') do |controller|
     #TODO handle the case some nodes are not up and running
     unless controller.error?
@@ -237,7 +235,7 @@ OmfCommon.init(:development, communication: { url: 'xmpp://beta:1234@localhost' 
       if !options[:image].nil? && options[:node].nil? && options[:status].nil? && !options[:target_nodes].nil?
         if options[:last_action] == "reset" || options[:last_action] == "shutdown"
           puts "call load on options #{options.inspect}"
-          load(comm)
+          load(comm, options)
         else
           puts "Invalid value for -l, only reset/shutdown values are available."
           puts opt_parser
