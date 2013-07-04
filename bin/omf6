@@ -180,9 +180,11 @@ def stat(comm, options)
           if m.operation == :inform
             case m.read_content("itype")
             when 'STATUS'
-              puts "#{m.read_property("node_name")} is #{m.read_property("msg")}"
-              logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
-              comm.disconnect
+              if m.read_property("event_type") == "NODE_STATUS"
+                puts "#{m.read_property("node_name")} is #{m.read_property("msg")} \n"
+                logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+                comm.disconnect
+              end
             when 'ERROR'
               error m.read_content('reason') if m.read_content("itype") == 'ERROR'
             when 'WARN'
