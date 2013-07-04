@@ -194,7 +194,6 @@ def stat(comm, options)
             controller.configure(state: {node: node.to_sym, status: :get_status})
           end
         end
-      end
 #         controller.request(node_state: node) do |m|
 #           if m.operation == :inform
 #             case m.read_content("itype")
