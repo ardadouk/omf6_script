@@ -207,7 +207,7 @@ def load(comm, options)
   end
 end
 
-def save(comm)
+def save(comm, options)
   comm.subscribe('cmController') do |controller|
     #TODO handle the case some nodes are not up and running
     unless controller.error?
@@ -375,7 +375,7 @@ OmfCommon.init(:production, communication: { url: 'xmpp://beta:1234@localhost' ,
       if options[:image].nil? && !options[:node].nil? && options[:status].nil? && options[:target_nodes].nil?
         if options[:last_action] == "reset" || options[:last_action] == "shutdown"
           puts "call save on options #{options.inspect}"
-          save(comm)
+          save(comm, options)
         else
           puts "Invalid value for -l, only reset/shutdown values are available."
           puts opt_parser
