@@ -25,8 +25,8 @@ opt_parser = OptionParser.new do |opts|
 end
 
 #run frisbee server
-def create_frisbeed(comm, port, options)
-  comm.create(:frisbeed, hrn: 'frisbee server', image: options[:image], port: port) do |reply_msg|
+def create_frisbeed(comm, fcontroller, port, options)
+  fcontroller.create(:frisbeed, hrn: 'frisbee server', image: options[:image], port: port) do |reply_msg|
     #image "/var/lib/omf-images-5.4/baseline.ndz"
     if reply_msg.success?
       server = reply_msg.resource
@@ -41,19 +41,15 @@ def create_frisbeed(comm, port, options)
           end
         end
       end
-
-      OmfCommon.eventloop.after(5) do
-        #release
-      end
     else
-      error ">>> Resource creation failed - #{reply_msg[:reason]}"
+      error ">>> Frisbeed resource creation failed - #{reply_msg[:reason]}"
     end
   end
 end
 
 #run frisbee client on a node
-def create_frisbee(comm, node, port)
-  comm.create(:frisbee, hrn: 'frisbee client', port: port, node_topic: "#{node.to_s}") do |reply_msg|
+def create_frisbee(comm, fcontroller, node, port)
+  fcontroller.create(:frisbee, hrn: 'frisbee client', port: port, node_topic: "#{node.to_s}") do |reply_msg|
     if reply_msg.success?
       client = reply_msg.resource
       client.on_subscribed do
@@ -66,19 +62,20 @@ def create_frisbee(comm, node, port)
 #                 puts "load operation started."
 #               end
             elsif m.read_property("event") == "STDOUT"
-              puts m.read_property("msg")
-            elsif m.read_property("event") == "EXIT" #only happens when frisbee runs with application resource controller
-              puts m.read_property("msg")
+              puts "#{m.read_property("node")}: #{m.read_property("msg")}"
+            elsif m.read_property("event") == "EXIT"
+              puts "#{m.read_property("node")}: #{m.read_property("msg")}"
+                comm.subscribe('cmController') do |controller|
+                  puts "#{options[:last_action]} node '#{m.read_property("node")}' out of PXE."
+                  controller.configure(state: {node: node.to_sym, status: :start_without_pxe, last_action: options[:last_action]})
+                end
+              end
             end
           end
         end
       end
-
-      OmfCommon.eventloop.after(5) do
-        #release
-      end
     else
-      error ">>> Resource creation failed - #{reply_msg[:reason]}"
+      error ">>> Frisbee resource creation failed - #{reply_msg[:reason]}"
     end
   end
 end
@@ -88,7 +85,7 @@ def load(comm, options)
     #TODO handle the case some nodes are not up and running
     unless controller.error?
       @nof_nodes = options[:target_nodes].length
-      #@nof_nodes_up_frisbee = 0
+      @nof_nodes_up_frisbee = 0
       nof_nodes_up_pxe = 0
       port = nil
       controller.on_message do |m|
@@ -99,16 +96,17 @@ def load(comm, options)
             if m.read_property("exit_code") == 0
               nof_nodes_up_pxe += 1
               if @nof_nodes == nof_nodes_up_pxe #all nodes are up and running on pxe
+                puts "all nodes are up and running on pxe."
                 comm.subscribe('frisbeeController') do |fcontroller|
+                  puts "requesting available port"
                   fcontroller.request([:ports]) do |m|
-                    puts "########## msg: #{m.inspect}"
                     port = m.read_property("ports")
-                    puts "port: #{port}"
-                    sleep 1
-                    create_frisbeed(fcontroller, port, options)
+                    puts "running frisbee server on port '#{port}'"
+                    create_frisbeed(comm, fcontroller, port, options)
                     options[:target_nodes].each do |node|
-                      create_frisbee(fcontroller, node, port) #frisbee client
+                      create_frisbee(comm, fcontroller, node, port) #frisbee client
                     end
+                    puts "frisbee client started on all nodes."
                   end
                 end
               end
