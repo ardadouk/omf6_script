@@ -223,7 +223,7 @@ def save(comm, options)
                   puts "running imagezip server on server."
                   create_imagezip_server(comm, fcontroller, port, options)
                   puts "running imagezip client on node."
-                  create_imagezip_client(comm, fcontroller, port, options)
+                  create_imagezip_client(comm, fcontroller, node, port, options)
                 end
               end
             else
