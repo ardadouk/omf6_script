@@ -237,7 +237,7 @@ def save(comm, options)
         end
       end
 
-      controller.configure(state: {node: options[:node]to_sym, status: :start_on_pxe})
+      controller.configure(state: {node: options[:node].to_sym, status: :start_on_pxe})
       puts "waiting for node to boot on PXE."
     else
       error controller.inspect
