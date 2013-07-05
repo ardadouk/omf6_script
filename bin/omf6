@@ -164,7 +164,7 @@ def load(comm, options)
       @nof_nodes_up_frisbee = 0
       @nof_nodes_up_without_pxe = 0
       nof_nodes_up_pxe = 0
-      port = nil"/dev/sda"
+      port = nil
       controller.on_message do |m|
         if m.operation == :inform && m.read_property("event_type") == "PXE"
           case m.read_content("itype")
