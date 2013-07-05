@@ -65,10 +65,9 @@ def create_frisbee(comm, fcontroller, node, port)
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
             elsif m.read_property("event") == "EXIT"
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
-                comm.subscribe('cmController') do |controller|
-                  puts "#{options[:last_action]} node '#{m.read_property("node")}' out of PXE."
-                  controller.configure(state: {node: node.to_sym, status: :start_without_pxe, last_action: options[:last_action]})
-                end
+              comm.subscribe('cmController') do |controller|
+                puts "#{options[:last_action]} node '#{m.read_property("node")}' out of PXE."
+                controller.configure(state: {node: node.to_sym, status: :start_without_pxe, last_action: options[:last_action]})
               end
             end
           end
