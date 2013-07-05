@@ -215,7 +215,7 @@ def save(comm, options)
           when 'STATUS'
             logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
             if m.read_property("exit_code") == 0
-              puts "all nodes are up and running on pxe."
+              puts "node is up and running on pxe."
               comm.subscribe('frisbeeController') do |fcontroller|
                 puts "requesting available port"
                 fcontroller.request([:ports]) do |m|
@@ -236,10 +236,9 @@ def save(comm, options)
           end
         end
       end
-      options[:target_nodes].each do |node|
-        controller.configure(state: {node: node.to_sym, status: :start_on_pxe})
-      end
-      puts "waiting for target nodes to boot on PXE."
+
+      controller.configure(state: {node: options[:node]to_sym, status: :start_on_pxe})
+      puts "waiting for node to boot on PXE."
     else
       error controller.inspect
     end
