@@ -48,7 +48,7 @@ def create_frisbeed(comm, fcontroller, port, options)
 end
 
 #run frisbee client on a node
-def create_frisbee(comm, fcontroller, node, port)
+def create_frisbee(comm, fcontroller, node, port, options)
   fcontroller.create(:frisbee, hrn: 'frisbee client', port: port, node_topic: "#{node.to_s}") do |reply_msg|
     if reply_msg.success?
       client = reply_msg.resource
@@ -103,7 +103,7 @@ def load(comm, options)
                     puts "running frisbee server on port '#{port}'"
                     create_frisbeed(comm, fcontroller, port, options)
                     options[:target_nodes].each do |node|
-                      create_frisbee(comm, fcontroller, node, port) #frisbee client
+                      create_frisbee(comm, fcontroller, node, port, options) #frisbee client
                     end
                     puts "frisbee client started on all nodes."
                   end
