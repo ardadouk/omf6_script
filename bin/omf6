@@ -258,10 +258,11 @@ def tell(comm, options)
         if m.operation == :inform
           case m.read_content("itype")
           when 'STATUS'
-            puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
-            logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
-            if m.read_property("event_type") == "EXIT"
-              puts "hmmm"
+            if m.read_property("event_type") == "STOP_NODE" ||  m.read_property("event_type") == "START_NODE" ||m.read_property("event_type") == "RESET_NODE"
+              puts "CM card response: #{m.read_property("msg")}"
+              logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+            elsif m.read_property("event_type") == "EXIT"
+              puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
               comm.disconnect
             end
           when 'ERROR'
