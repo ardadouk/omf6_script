@@ -1,0 +1,12 @@
+:xmpp:
+  :username: omf6_rc
+  :password: pw
+  :server: testserver
+:auth:
+  :root_cert_dir: ~/.omf/trusted_roots
+  :entity_cert: ~/.omf/urc.pem
+  :entity_key: ~/.omf/user_rc_key.pem
+:domain:
+  :ip: 10.0.0.
+
+
