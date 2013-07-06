@@ -264,7 +264,6 @@ def tell(comm, options)
             elsif m.read_property("event_type") == "EXIT"
               puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
               comm.disconnect
-              exit
             end
           when 'ERROR'
             error m.read_content('reason') if m.read_content("itype") == 'ERROR'
