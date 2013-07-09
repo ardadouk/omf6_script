@@ -227,7 +227,6 @@ def save(comm, options)
                   port = m.read_property("ports")
                   puts "running imagezip server on server."
                   create_imagezip_server(comm, fcontroller, port, options)
-                  sleep 0.5
                   puts "running imagezip client on node."
                   create_imagezip_client(comm, fcontroller, options[:node], port, options)
                 end
