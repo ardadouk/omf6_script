@@ -184,14 +184,14 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
 #                 puts "load operation started."
 #               end
             elsif m.read_property("event") == "STDOUT"
-              puts "#{m.read_property("node")}: #{m.read_property("msg")}"
+              puts "#{m.read_property("msg")}"
             elsif m.read_property("event") == "EXIT"
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
               comm.subscribe('cmController') do |controller|
                 controller.on_message do |msg|
                   if m.operation == :inform
                     if m.read_content("event") == "PXE_OFF"
-                      puts "#{options[:last_action]} node '#{m.read_property("node")}' out of PXE."
+                      puts "#{m.read_property("node")}: save proccess completed."
                       comm.disconnect
                     end
                   end
