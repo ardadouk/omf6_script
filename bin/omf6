@@ -178,7 +178,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
         client.on_message do |m|
           if m.operation == :inform
             if m.read_property("event") == "STDOUT"
-              puts "#{m.read_property("msg")}"
+              print "#{m.read_property("msg")}"
             elsif m.read_property("event") == "EXIT"
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
               comm.subscribe('cmController') do |controller|
