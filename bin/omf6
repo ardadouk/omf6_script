@@ -187,7 +187,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
                   if m.operation == :inform
                     case m.read_content("itype")
                     when 'STATUS'
-                      if m.read_content("event_type") == "PXE_OFF"
+                      if m.read_property("event_type") == "PXE_OFF"
                         puts "#{m.read_property("node")}: save proccess completed."
                         comm.disconnect
                       end
