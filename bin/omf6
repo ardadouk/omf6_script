@@ -177,22 +177,23 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
       client.on_subscribed do
         client.on_message do |m|
           if m.operation == :inform
-            if m.read_property("event") == "STARTED"#only happens when frisbee runs with application resource controller
-#               @nof_nodes_up_frisbee += 1
-#               if @nof_nodes == @nof_nodes_up_frisbee
-#                 create_frisbeed(fcontroller, port) #frisbee server
-#                 puts "load operation started."
-#               end
-            elsif m.read_property("event") == "STDOUT"
+            if m.read_property("event") == "STDOUT"
               puts "#{m.read_property("msg")}"
             elsif m.read_property("event") == "EXIT"
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
               comm.subscribe('cmController') do |controller|
                 controller.on_message do |msg|
                   if m.operation == :inform
-                    if m.read_content("event") == "PXE_OFF"
-                      puts "#{m.read_property("node")}: save proccess completed."
-                      comm.disconnect
+                    case m.read_content("itype")
+                    when 'STATUS'
+                      if m.read_content("event") == "PXE_OFF"
+                        puts "#{m.read_property("node")}: save proccess completed."
+                        comm.disconnect
+                      end
+                    when 'ERROR'
+                      error m.read_content('reason') if m.read_content("itype") == 'ERROR'
+                    when 'WARN'
+                      warn m.read_content('reason') if m.read_content("itype") == 'WARN'
                     end
                   end
                 end
