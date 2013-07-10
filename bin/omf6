@@ -183,6 +183,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
               comm.subscribe('cmController') do |controller|
                 controller.on_message do |msg|
+                  puts "$$$$$$$$ msg: #{msg.inspect}"
                   if m.operation == :inform
                     case m.read_content("itype")
                     when 'STATUS'
