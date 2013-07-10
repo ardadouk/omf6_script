@@ -224,8 +224,8 @@ def save(comm, options)
               comm.subscribe('frisbeeController') do |fcontroller|
                 puts "requesting available port"
                 fcontroller.request([:ports]) do |m|
-                  #port = m.read_property("ports")
-                  port = "9000"
+                  port = m.read_property("ports")
+                  #port = "9000"
                   puts "running imagezip server on server."
                   create_imagezip_server(comm, fcontroller, port, options)
                   sleep 2
