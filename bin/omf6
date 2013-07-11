@@ -59,7 +59,7 @@ def create_frisbee(comm, fcontroller, node, port, options)
       client.on_subscribed do
         client.on_message do |m|
           if m.operation == :inform
-            if m.read_property("event") == "STARTED"#only happens when frisbee runs with application resource controller
+            if m.read_property("event") == "STARTED"#only happens when frisbee runs with :application rc
 #               @nof_nodes_up_frisbee += 1
 #               if @nof_nodes == @nof_nodes_up_frisbee
 #                 create_frisbeed(fcontroller, port) #frisbee server
@@ -72,13 +72,21 @@ def create_frisbee(comm, fcontroller, node, port, options)
               comm.subscribe('cmController') do |controller|
                 controller.on_message do |msg|
                   if msg.operation == :inform
-                    if msg.read_property("event_type") == "PXE_OFF"
-                      puts "#{options[:last_action]} node '#{msg.read_property("node")}' out of PXE."
-                      @nof_nodes_up_without_pxe += 1
-                      puts "@@@@ #{@nof_nodes} , #{@nof_nodes_up_without_pxe}"
-                      if @nof_nodes == @nof_nodes_up_without_pxe
-                        comm.disconnect
+                    case msg.read_content("itype")
+                    when 'STATUS'
+                      if msg.read_property("event_type") == "PXE_OFF"
+                        puts "#{options[:last_action]} node '#{msg.read_property("node")}' out of PXE."
+                        @nof_nodes_up_without_pxe += 1
+                        puts "@@@@ #{@nof_nodes} , #{@nof_nodes_up_without_pxe}"
+                        if @nof_nodes == @nof_nodes_up_without_pxe
+                          puts "load proccess completed."
+                          comm.disconnect
+                        end
                       end
+                    when 'ERROR'
+                      error msg.read_content('reason') if m.read_content("itype") == 'ERROR'
+                    when 'WARN'
+                      warn msg.read_content('reason') if m.read_content("itype") == 'WARN'
                     end
                   end
                 end
