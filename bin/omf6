@@ -185,8 +185,10 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
                 controller.on_message do |msg|
                   puts "$$$$$$$$ msg: #{msg.inspect}"
                   if m.operation == :inform
+                    puts "$$$$$$$$ msg: mpike1"
                     case m.read_content("itype")
                     when 'STATUS'
+                      puts "$$$$$$$$ msg: mpike2"
                       if m.read_property("event_type") == "PXE_OFF"
                         puts "#{m.read_property("node")}: save proccess completed."
                         comm.disconnect
