@@ -183,7 +183,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
               puts "#{m.read_property("node")}: #{m.read_property("msg")}"
               comm.subscribe('cmController') do |controller|
                 controller.on_message do |msg|
-                  puts "$$$$$$$$ msg: #{msg.inspect}"
+                  puts "$$$$$$$$ msg: #{msg.inspect}\n inform: #{m.operation}, itype: #{m.read_content("itype")}, event: #{m.read_property("event_type")}"
                   if m.operation == :inform
                     puts "$$$$$$$$ msg: mpike1"
                     case m.read_content("itype")
