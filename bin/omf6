@@ -77,7 +77,6 @@ def create_frisbee(comm, fcontroller, node, port, options)
                       if msg.read_property("event_type") == "PXE_OFF"
                         puts "#{options[:last_action]} node '#{msg.read_property("node")}' out of PXE."
                         @nof_nodes_up_without_pxe += 1
-                        puts "@@@@ #{@nof_nodes} , #{@nof_nodes_up_without_pxe}"
                         if @nof_nodes == @nof_nodes_up_without_pxe
                           puts "load proccess completed."
                           comm.disconnect
@@ -195,7 +194,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
                     case msg.read_content("itype")
                     when 'STATUS'
                       if msg.read_property("event_type") == "PXE_OFF"
-                        puts "#{msg.read_property("node")}: save proccess completed."
+                        puts "save proccess completed."
                         comm.disconnect
                       end
                     when 'ERROR'
