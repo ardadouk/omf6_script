@@ -317,7 +317,7 @@ def stat(comm, options)
               nof_nodes += 1
               puts nof_nodes
               if nof_nodes == options[:target_nodes].length
-                comm.disconnect
+                OmfCommon.eventloop.after(2) { comm.disconnect }
               end
             end
           when 'ERROR'
