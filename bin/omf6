@@ -262,6 +262,7 @@ end
 def tell(comm, options)
   comm.subscribe('cmController') do |controller|
     unless controller.error?
+      nof_nodes = 0
       controller.on_message do |m|
         if m.operation == :inform
           case m.read_content("itype")
@@ -271,7 +272,11 @@ def tell(comm, options)
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
             elsif m.read_property("event_type") == "EXIT"
               puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
-              comm.disconnect
+              logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
+              nof_nodes += 1
+              if nof_nodes == options[:target_nodes].length
+                OmfCommon.eventloop.after(2) { comm.disconnect }
+              end
             end
           when 'ERROR'
             error m.read_content('reason') if m.read_content("itype") == 'ERROR'
@@ -315,7 +320,6 @@ def stat(comm, options)
               puts "#{m.read_property("node_name")} is #{m.read_property("msg")} \n"
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
               nof_nodes += 1
-              puts nof_nodes
               if nof_nodes == options[:target_nodes].length
                 OmfCommon.eventloop.after(2) { comm.disconnect }
               end
