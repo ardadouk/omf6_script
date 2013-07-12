@@ -79,7 +79,7 @@ def create_frisbee(comm, fcontroller, node, port, options)
                         @nof_nodes_up_without_pxe += 1
                         if @nof_nodes == @nof_nodes_up_without_pxe
                           puts "load proccess completed."
-                          OmfCommon.eventloop.after(2) { comm.disconnect }
+                          comm.disconnect
                         end
                       end
                     when 'ERROR'
@@ -195,7 +195,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
                     when 'STATUS'
                       if msg.read_property("event_type") == "PXE_OFF"
                         puts "save proccess completed."
-                        OmfCommon.eventloop.after(2) { comm.disconnect }
+                        comm.disconnect
                       end
                     when 'ERROR'
                       error msg.read_content('reason') if m.read_content("itype") == 'ERROR'
@@ -275,7 +275,7 @@ def tell(comm, options)
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
               nof_nodes += 1
               if nof_nodes == options[:target_nodes].length
-                OmfCommon.eventloop.after(2) { comm.disconnect }
+                comm.disconnect
               end
             end
           when 'ERROR'
@@ -300,7 +300,7 @@ def tell(comm, options)
       else
         puts "Invalid value for -a, only on/off/reset values are available."
         puts opt_parser
-        OmfCommon.eventloop.after(2) { comm.disconnect }
+        comm.disconnect
       end
     else
       error controller.inspect
@@ -321,7 +321,7 @@ def stat(comm, options)
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
               nof_nodes += 1
               if nof_nodes == options[:target_nodes].length
-                OmfCommon.eventloop.after(2) { comm.disconnect }
+                comm.disconnect
               end
             end
           when 'ERROR'
@@ -337,7 +337,7 @@ def stat(comm, options)
       end
     else
       error controller.inspect
-      OmfCommon.eventloop.after(2) { comm.disconnect }
+      comm.disconnect
     end
   end
 end
@@ -368,12 +368,12 @@ OmfCommon.init(:production, communication: { url: "xmpp://#{@xmpp[:username]}:#{
         else
           puts "Invalid value for -l, only reset/shutdown values are available."
           puts opt_parser
-          OmfCommon.eventloop.after(2) { comm.disconnect }
+          comm.disconnect
         end
       else
         puts "Invalid arguements."
         puts opt_parser
-        OmfCommon.eventloop.after(2) { comm.disconnect }
+        comm.disconnect
       end
     when "save"
       if options[:image].nil? && !options[:node].nil? && options[:status].nil? && options[:target_nodes].nil?
@@ -383,12 +383,12 @@ OmfCommon.init(:production, communication: { url: "xmpp://#{@xmpp[:username]}:#{
         else
           puts "Invalid value for -l, only reset/shutdown values are available."
           puts opt_parser
-          OmfCommon.eventloop.after(2) { comm.disconnect }
+          comm.disconnect
         end
       else
         puts "Invalid arguements."
         puts opt_parser
-        OmfCommon.eventloop.after(2) { comm.disconnect }
+        comm.disconnect
       end
     when "tell"
       if options[:image].nil? && options[:node].nil? && !options[:status].nil? && !options[:target_nodes].nil?
@@ -398,12 +398,12 @@ OmfCommon.init(:production, communication: { url: "xmpp://#{@xmpp[:username]}:#{
         else
           puts "Invalid value for -a, only on/off/reset values are available."
           puts opt_parser
-          OmfCommon.eventloop.after(2) { comm.disconnect }
+          comm.disconnect
         end
       else
         puts "Invalid arguements."
         puts opt_parser
-        OmfCommon.eventloop.after(2) { comm.disconnect }
+        comm.disconnect
       end
     when "stat"
       if options[:image].nil? && options[:node].nil? && options[:status].nil? && !options[:target_nodes].nil?
@@ -412,12 +412,12 @@ OmfCommon.init(:production, communication: { url: "xmpp://#{@xmpp[:username]}:#{
       else
         puts "Invalid arguements."
         puts opt_parser
-        OmfCommon.eventloop.after(2) { comm.disconnect }
+        comm.disconnect
       end
     else
       puts "Invalid command / options."
       puts opt_parser
-      OmfCommon.eventloop.after(2) { comm.disconnect }
+      comm.disconnect
     end
 
     comm.on_interrupted { comm.disconnect }
