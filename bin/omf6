@@ -194,7 +194,7 @@ def create_imagezip_client(comm, fcontroller, node, port, options)
                     case msg.read_content("itype")
                     when 'STATUS'
                       if msg.read_property("event_type") == "PXE_OFF"
-                        puts "save proccess completed."
+                        puts "save proccess completed. Image was saved on file '/tmp/image.ndz'"
                         comm.disconnect
                       end
                     when 'ERROR'
@@ -233,7 +233,7 @@ def save(comm, options)
                 puts "requesting available port"
                 fcontroller.request([:ports]) do |m|
                   port = m.read_property("ports")
-                  puts "running imagezip server on server."
+                  puts "running imagezip server on port #{port}."
                   create_imagezip_server(comm, fcontroller, port, options)
                   sleep 2
                   puts "running imagezip client on node."
@@ -269,6 +269,7 @@ def tell(comm, options)
           when 'STATUS'
             if m.read_property("event_type") == "STOP_NODE" ||  m.read_property("event_type") == "START_NODE" ||m.read_property("event_type") == "RESET_NODE"
               puts "CM card response: #{m.read_property("msg")}"
+              puts "Wating for node responce."
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
             elsif m.read_property("event_type") == "EXIT"
               puts "#{m.read_property("node_name")}: #{m.read_property("msg")}"
@@ -317,7 +318,7 @@ def stat(comm, options)
           case m.read_content("itype")
           when 'STATUS'
             if m.read_property("event_type") == "NODE_STATUS"
-              puts "#{m.read_property("node_name")} is #{m.read_property("msg")} \n"
+              puts "#{m.read_property("node_name")} is #{m.read_property("msg")}"
               logger.info "#{m.read_property("msg")}, exit code: #{m.read_property("exit_code")}"
               nof_nodes += 1
               if nof_nodes == options[:target_nodes].length
